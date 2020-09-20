@@ -1,0 +1,36 @@
+swagger: "2.0"
+info:
+  description: Swagger file describing API structure
+  version: "1.0.0"
+  title: JP's Movie API
+consumes:
+  - "application/json"
+produces:
+  - "application/json"
+
+basePath: "/api"
+
+# Paths supported by the server application
+paths:
+  /movies:
+    get:
+      operationId: movies.read
+      tags:
+        - Movies
+      summary: The movies data structure supported by the server application
+      description: Read the list of movies
+      responses:
+        200:
+          description: Successful read movies list operation
+          schema:
+            type: array
+            items:
+              properties:
+                mname:
+                  type: string
+                mgenre:
+                  type: string
+                mdatereleased:
+                  type: string
+                mruntime:
+                  type: integer
