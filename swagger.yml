@@ -14,7 +14,7 @@ basePath: "/api"
 paths:
   /movies:
     get:
-      operationId: movies.read
+      operationId: movies.read_all
       tags:
         - Movies
       summary: The movies data structure supported by the server application
@@ -34,3 +34,103 @@ paths:
                   type: string
                 mruntime:
                   type: integer
+    post:
+      operationId: movies.create
+      tags:
+        - Movies
+      summary: Create a movie and add it to the movielist
+      description: Create a new movie in the movie list
+      parameters:
+        - name: movie
+          in: body
+          description: Movie to create
+          required: true
+          schema:
+            type: object
+            properties:
+              mname:
+                type: string
+                description: Name of movie to create
+              mgenre:
+                type: string
+                description: Genre of movie to create
+              mdatereleased:
+                type: string
+                description: Release date of movie to create
+              mruntime:
+                type: integer
+                description: Run time (in minutes) of movie to create
+      responses:
+        201:
+          description: Successfully created movie in database
+
+  /movies/{id}:
+    get:
+      operationId: movies.read_one
+      tags:
+        - Movies
+      summary: Read one movie from the movie list
+      description: Read one movie from the movie list
+      parameters:
+        - name: id
+          in: path
+          description: ID of the movie to get from the list
+          type: integer
+          required: true
+      responses:
+        200:
+          description: Successfully read movie from movie list operation
+          schema:
+            properties:
+              mname:
+                type: string
+              mgenre:
+                type: string
+              mdatereleased:
+                type: string
+              mruntime:
+                type: integer
+
+    put:
+      operationId: movies.update
+      tags:
+        - Movies
+      summary: Update a movie in the movie list
+      description: Update a movie in the movie list
+      parameters:
+        - name: id
+          in: path
+          description: ID of the movie to update in the list
+          type: integer
+          required: true
+        - name: movie
+          in: body
+          schema:
+            type: object
+            properties:
+              mname:
+                type: string
+              mgenre:
+                type: string
+              mdatereleased:
+                type: string
+              mruntime:
+                type: integer
+      responses:
+        200:
+          description: Successfully updated movie in movie list
+
+    delete:
+      operationId: movies.delete
+      tags:
+        - Movies
+      summary: Delete a movie from the people list
+      description: Delete a movie
+      parameters:
+        - name: id
+          in: path
+          type: integer
+          required: true
+      responses:
+        200:
+          description: Successfully deleted a movie from movie list
