@@ -1,9 +1,4 @@
-from datetime import datetime
-
 from flask import make_response, abort
-
-def get_timestamp():
-    return datetime.now().strftime(("%Y-%m-%d %H:%M:%S"))
 
 # Temp Data to serve
 MOVIES = {
@@ -33,21 +28,21 @@ MOVIES = {
     },
 }
 
-# Create a handler for our read (GET) movies
+# Create a handler for read (GET) movies
 def read_all():
     """
-    This function responds to a request for /api/movies
-    with the complete lists of movies
+    Responds to api/movies and return alls movies
 
-    :return:        sorted list of movies
+    :return:        json string list of movies
     """
     # Create the list of movies from our data
-    return [MOVIES[key] for key in sorted(MOVIES.keys())]
+    return {key: MOVIES[key] for key in sorted(MOVIES.keys())}
 
-def read_one(id):
+
+# Specific ID
+def read_one(id: int):
     """
-    This function responds to a request for api/peole/{id}
-    with one matching movie from movies
+    Requests one movie by id
 
     :param id: ID of movie in database
     :type: int
@@ -56,28 +51,76 @@ def read_one(id):
     """
     # existence check
     if id in MOVIES.keys():
-        movie = MOVIES.get(ID)
+        movie = {id: MOVIES.get(id)}
     else:
-        abort(
-            404, f'Movie with ID of { id } not found.'
-        )
+        abort(404, f"Movie with ID of { id } not found.")
+
     return movie
 
-def create(movie):
+
+def create(movie: dict):
     """
-    This function creates a new movie in the movie DB
-    based on the passed in movie data
+    Creates a new movie based on data provided
 
     :param movie:  movie to create in movie structure
     :return:        201 on success, 406 on movie exists
-    """ 
+    """
     mname = movie.get("mname", None)
+    mgenre = movie.get("mgenre", None)
+    mdatereleased = movie.get("mdatereleased", None)
+    mruntime = movie.get("mruntime", None)
 
-    if movie not in MOVIES and mname is not None:
-        MOVIES.update(movie)
-        return MOVIES[movie.key], 201
-    else:
-        abort(
-            406,
-            f'{ movie } already exists.'
+    if (
+        movie["mname"] not in [movie[1]["mname"] for movie in MOVIES.items()]
+        and mname is not None
+    ):
+        # kludge and would need discrete GUIDs in PROD
+        MOVIES[max(MOVIES.keys()) + 1] = {
+            "mname": mname,
+            "mgenre": mgenre,
+            "mdatereleased": mdatereleased,
+            "mruntime": mruntime,
+        }
+        return make_response(
+            f"{ mname } with { max(MOVIES.keys()) } as ID succesfully created", 201
         )
+    else:
+        abort(406, f"{ movie } already exists.")
+
+
+def update(id, movie):
+    """
+    Update a movie in the DB based on id
+
+    :param id: id of movie to update
+    :type: int
+    :param movie: movie to update
+    :type string
+    :return: updated movie stucture
+    """
+    if id in MOVIES.keys():
+        MOVIES[id]["mname"] = movie.get("mname")
+        MOVIES[id]["mgenre"] = movie.get("mgenre")
+        MOVIES[id]["mdatereleased"] = movie.get("mdatereleased")
+        MOVIES[id]["mruntime"] = movie.get("mruntime")
+
+        return {id: MOVIES[id]}
+
+    else:
+        abort(404, f"No movie with { id } found.")
+
+
+def delete(id):
+    """
+    Deletes an entry form the database
+
+    :param id: id of movie to delete
+    :type: integer
+    :return: 200 on successful delete, 404 if not found
+    """
+    if id in MOVIES.keys():
+        del MOVIES[id]
+        return make_response(f" { id } successfully deleted.")
+
+    else:
+        abort(404, f"Movie with { id } not found.")

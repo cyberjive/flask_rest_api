@@ -26,6 +26,8 @@ paths:
             type: array
             items:
               properties:
+                id:
+                  type: integer
                 mname:
                   type: string
                 mgenre:
