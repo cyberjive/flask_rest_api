@@ -1,3 +1,5 @@
+# TODO Fix Jscript, move 'db' and add data, more routes?
+# Add logging
 from flask import make_response, abort
 
 # Temp Data to serve

@@ -126,7 +126,7 @@ paths:
       operationId: movies.delete
       tags:
         - Movies
-      summary: Delete a movie from the people list
+      summary: Delete a movie from the movie list
       description: Delete a movie
       parameters:
         - name: id
